@@ -1,18 +1,14 @@
-const mongoose = require('mongoose')
-const {Schema} = mongoose
+const db = require('../../config/db')
+const {Schema} = db
 
-mongoose.connect('mongodb://localhost:27017/translation')
-
-mongoose.connection.on('error', console.log)
-
-const Translation = module.exports = mongoose.model('Translation', {
+const Model = module.exports = db.model('Translation', {
     word: [String] ,
     translateTo: Schema.Types.Mixed
 })
 
-Translation.createTranslation = ( { word, translateTo, toWord }, callback ) => {
+Model.createTranslation = ( { word, translateTo, toWord }, callback ) => {
 
-    Translation.findOne( { word } , (err, translation ) => {
+    Model.findOne( { word } , (err, translation ) => {
         
         translation = translation || { translateTo : {} } 
         translation.translateTo[translateTo] = toWord  
@@ -24,20 +20,14 @@ Translation.createTranslation = ( { word, translateTo, toWord }, callback ) => {
                     translation.word = translation.word.concat( wd )
                 }
             }
-            Translation.update( {word}, translation , callback )
+            Model.update( {word}, translation , callback )
 
         } else {
 
             translation.word = [ word, toWord ]
-            Translation.create( translation, callback  )
-        
+            Model.create( translation, callback  )
+
         }
 
     } )
 }
-
-
-//{
-//  lang: String,
-//  word: String
-//}
