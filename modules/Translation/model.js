@@ -1,7 +1,9 @@
 const db = require('../../config/db')
 const {Schema} = db
 
-const Model = module.exports = db.model('Translation', {
+const { moduleName } = require('./config')
+
+const Model = module.exports = db.model( moduleName, {
     word: [String] ,
     translateTo: Schema.Types.Mixed
 })
@@ -30,4 +32,5 @@ Model.createTranslation = ( { word, translateTo, toWord }, callback ) => {
         }
 
     } )
+
 }

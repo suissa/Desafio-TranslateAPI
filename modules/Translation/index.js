@@ -4,7 +4,9 @@ const app = express.Router()
 
 const controller = require('./controller')
 
-for( let route of require('./routes') ){
+const { routes } = require('./config')
+
+for( let route of routes ){
     app[ route.method ]( route.path, controller[ route.action ] ) 
 }
 
