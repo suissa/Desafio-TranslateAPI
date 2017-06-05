@@ -31,45 +31,35 @@ app.get( '/key', ( req, res ) => {
 
     const {
         word,
-        toLanguage,
+        translateTo,
     } = req.query
 
-    console.log(req.query)
-
-    Translation.findOne( { 'word': { $in : [word] }  }, ( err, result ) => { 
-        if( !err && result ){ 
-            console.log(result.translateTo, toLanguage) 
-            res.json( { [toLanguage]: result.translateTo[toLanguage]} )
+    Translation.findOne( { 'word': word , translateTo: { $exists : translateTo } }, ( err, result ) => { 
+        if( !err && result ){
+            res.json( { [translateTo]: result.translateTo[translateTo]} )
         }
         if( !err && !result ){
             res.json( { message : "Word not found"} )
+        }
+        if( err ){
+            res.err( err )
         }
         res.end( )
     } )
 })
 
 app.post( '/key', ( req, res ) => {
-    let {word} = req.body
-
+    
     const {
+        word,
         translateTo,
         toWord
     } = req.body 
 
-    const create = { 
-            word: [word, toWord], 
-            translateTo: { [translateTo]: toWord } 
-    }
-
-    // Translation.update( query, mod,  (err, result) => {
-    //     console.log(err);
-    //     res.json( result )
-    //     res.end()
-    // } )
-
-    Translation.create( create,  (err, result) => {
-        console.log(err);
+    Translation.createTranslation( { word, translateTo, toWord }, (err, result) => {
         res.json( result )
         res.end()
-    } )
+    }
+ )
+
 })
